@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery Selectors and Events</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>jQuery Selectors and Events Demo</h1>
+    <p id="firstPara">This is the first paragraph.</p>
+    <p class="text">This is a paragraph with a class.</p>
+    <p class="text">Another paragraph with the same class.</p>
+    <p>This paragraph has no class or ID.</p>
+    <input type="text" id="inputBox" placeholder="Type something...">
+    <button id="btnHighlight">Highlight Paragraphs</button>
+    <button id="btnReset">Reset</button>
+    <button id="btnHide">Hide All</button>
+    <button id="btnShow">show All</button>
+
+    <script>
+        $(document).ready(function () {
+            // Selectors example
+            $('#btnHighlight').click(function () {
+                $('p.text').addClass('highlight'); // Selects all paragraphs with the class "text"
+            });
+
+            // Event for resetting the style
+            $('#btnReset').click(function () {
+                $('p').removeClass('highlight'); // Removes the class "highlight" from all paragraphs
+            });
+
+            // Event for hiding elements
+            $('#btnHide').click(function () {
+                $('p').hide(); // Hides all paragraph elements
+            });
+
+            // Event for showing elements
+            $('#btnShow').click(function () {
+                $('p').show(); // Hides all paragraph elements
+            });
+
+            // Event example: Textbox interaction
+            $('#inputBox').on('input', function () {
+                const inputValue = $(this).val();
+                $('#firstPara').text(`You typed: ${inputValue}`); // Updates the text of the first paragraph
+            });
+        });
+    </script>
+</body>
+</html>
