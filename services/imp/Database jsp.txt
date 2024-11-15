@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="insert.jsp" method="post">
+	Id:<input type="text" name="id" required><br>
+	Salary:<input type="text" name="salary" required><br>
+	Submit:<input type="submit"><br>
+	</form>
+</body>
+</html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.sql., javax.sql." %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		Connection conn =null;
+		PreparedStatement stmt = null;
+		try{
+			int id = Integer.parseInt(request.getParameter("id"));
+			float salary  = Float.parseFloat(request.getParameter("salary"));
+			 Class.forName("com.mysql.cj.jdbc.Driver");
+			 conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/Vijaya","root","Saimanish@2004");
+			 String sql = "update employees set salary=? where id=?";
+			 stmt = conn.prepareStatement(sql);
+			 stmt.setFloat(1, salary);
+			 stmt.setInt(2,id);
+			int rows = stmt.executeUpdate();
+			if (rows > 0) {
+                out.println("<p>Employee row updated successfully!</p>");
+            } else {
+                out.println("<p>Error: Employee row cannot be updated.</p>");
+            }
+		} catch (Exception e) {
+         out.println("Error: " + e.getMessage());
+		}
+	%>
+</body>
+</html>

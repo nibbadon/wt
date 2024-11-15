@@ -1,0 +1,105 @@
+Step 1: Create a New Java Project
+Create a New Project:
+Click on File > New > Java Project.
+In the dialog that appears, enter a project name (e.g., XMLValidationProject).
+Uncheck the option to create a module-info.java file if it appears.
+Click Finish.
+Step 2: Create the DTD and XML Files
+Create a DTD File:
+Right-click on the src folder in your new project in the Package Explorer.
+Select New > File.
+Name it 'customers.dtd' and click Finish.
+Open customers.dtd and add the following content:
+xml
+<!ELEMENT customers (customer+)>
+<!ELEMENT customer (name, email, phone)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT email (#PCDATA)>
+<!ELEMENT phone (#PCDATA)>
+ 
+Create an XML File:
+Right-click on the src folder again.
+Select New > File.
+Name it 'external_dtd.xml' and click Finish.
+Open external_dtd.xml and add the following content:
+xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE customers SYSTEM "customers.dtd">
+<customers>
+    <customer>
+        <name>Satyam Nayak</name>
+        <email>Satyam@nayak.com</email>
+        <phone>122-112-1234</phone>
+    </customer>
+    <customer>
+        <name>Sonu N</name>
+        <email>Sonu@N.com</email>
+        <phone>112-554-9969</phone>
+    </customer>
+</customers>
+ 
+Step 3: Create the Java Files
+Create a Simple Error Handler Class:
+Right-click on the src folder.
+Select New > Class.
+Name it 'SimpleErrorHandler', and click Finish.
+Add the following code to handle validation errors:
+java
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXParseException;
+ 
+public class SimpleErrorHandler implements ErrorHandler {
+    @Override
+    public void warning(SAXParseException exception) throws SAXParseException {
+        System.out.println("Warning: " + exception.getMessage());
+    }
+ 
+    @Override
+    public void error(SAXParseException exception) throws SAXParseException {
+        System.out.println("Error: " + exception.getMessage());
+    }
+ 
+    @Override
+    public void fatalError(SAXParseException exception) throws SAXParseException {
+        System.out.println("Fatal error: " + exception.getMessage());
+    }
+}
+ 
+Create the Main Validation Class:
+Right-click on the src folder.
+Select New > Class.
+Name it 'ValidateExternalDTD', and check the box to include the public static void main(String[] args) method, then click Finish.
+Add the following code for XML validation:
+java
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+ 
+import java.io.File;
+import java.io.IOException;
+ 
+public class ValidateExternalDTD {
+    public static void main(String[] args) {
+        try {
+            File xmlFile = new File("external_dtd.xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            dbFactory.setValidating(true); // Enable validation
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            dBuilder.setErrorHandler(new SimpleErrorHandler());
+            Document doc = dBuilder.parse(xmlFile);
+            doc.getDocumentElement().normalize();
+            System.out.println("XML is valid with External DTD.");
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            System.out.println("XML is invalid: " + e.getMessage());
+        }
+    }
+}
+ 
+Step 4: Run Your Program
+Run the Program:
+Right-click on the ValidateExternalDTD.java file in the Package Explorer.
+Select Run As > Java Application.
+View Output:
+Check the Console view at the bottom of Eclipse for output messages indicating whether your XML is valid or invalid.

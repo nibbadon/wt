@@ -1,0 +1,88 @@
+package HelloServlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/update")
+public class update extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+    public update() {
+        super();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+        PrintWriter pw = response.getWriter();
+
+        // Getting parameters from the request
+        String id = request.getParameter("id");
+        String salaryParam = request.getParameter("salary");
+        
+        // Convert salary to float
+        float salary = 0;
+        try {
+            salary = Float.parseFloat(salaryParam);
+        } catch (NumberFormatException e) {
+            pw.println("<h2>Invalid salary format: " + salaryParam + "</h2>");
+            return;
+        }
+
+        String url = "jdbc:mysql://localhost:3306/Vijaya"; // replace with your DB URL
+        String username = "root"; // replace with your DB username
+        String password = "Saimanish@2004"; // replace with your DB password
+
+        Connection conn = null;
+        PreparedStatement st = null;
+
+        try {
+            // Load MySQL JDBC Driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Establish the connection
+            conn = DriverManager.getConnection(url, username, password);
+
+            // Prepare the SQL update statement
+            st = conn.prepareStatement("UPDATE employees SET salary=? WHERE id=?");
+            st.setFloat(1, salary);
+            st.setString(2, id);
+
+            // Execute update
+            int rowsUpdated = st.executeUpdate();
+            if (rowsUpdated > 0) {
+                pw.println("<h1>Record with ID " + id + " has been successfully updated with new salary: " + salary + ".</h1>");
+            } else {
+                pw.println("<h1>No record found for ID: " + id + ".</h1>");
+            }
+
+        } catch (SQLException e) {
+            pw.println("<h2>An error occurred while updating your information. Please try again later.</h2>");
+            pw.println("<p>Error Details: " + e.getMessage() + "</p>"); // Display the SQL exception message for debugging
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            pw.println("<h2>JDBC Driver not found. Ensure the MySQL connector .jar file is included in the project.</h2>");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (st != null) st.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
+}
